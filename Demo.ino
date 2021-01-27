@@ -202,7 +202,7 @@ void loop() {
       
       count = newCount;
       emgAramCount=0;
-      //playMP3("/Warning-Alarm01-1L.mp3");
+      playMP3("/Warning-Alarm01-1L.mp3");
       //emgAramCount=0;
     }
 
