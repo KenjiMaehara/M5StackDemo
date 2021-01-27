@@ -174,7 +174,7 @@ void loop() {
     M5.Lcd.printf("Count Send: %d", count);
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter", count);
+    Firebase.setInt("/M5Stack/counter02", count);
     
 
   }
@@ -189,7 +189,7 @@ void loop() {
     M5.Lcd.printf("Count Down: %d", count);
 
 
-    newCount = Firebase.getInt("/M5Stack/counter");
+    newCount = Firebase.getInt("/M5Stack/counter02");
 
     if(count != newCount)
     {
@@ -202,7 +202,7 @@ void loop() {
       
       count = newCount;
       emgAramCount=0;
-      playMP3("/Warning-Alarm01-1L.mp3");
+      //playMP3("/Warning-Alarm01-1L.mp3");
       //emgAramCount=0;
     }
 
@@ -212,9 +212,12 @@ void loop() {
   }
   #endif
 
+
+  #if 0
   if(emgAramCount > 3){
     mp3->stop();
   }
+  #endif
 
 
 
@@ -224,7 +227,7 @@ void loop() {
     newCount = 0;
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter", 0);
+    Firebase.setInt("/M5Stack/counter02", 0);
 
     // ディスプレイ表示
     M5.Lcd.setCursor(10, 100);
@@ -241,3 +244,9 @@ void loop() {
 
 
 }
+
+
+
+
+
+
