@@ -13,8 +13,10 @@
 
 
 
-#define WIFI_SSID "20200815me"
-#define WIFI_PASSWORD "0815asdf"
+//#define WIFI_SSID "20200815me"
+//#define WIFI_PASSWORD "0815asdf"
+#define WIFI_SSID "googlemain"
+#define WIFI_PASSWORD "asdf1116"
 
 // FirebaseのデータベースURL（ご自身のデータベースURLに変更してください）
 #define FIREBASE_DATABASE_URL "https://m5data-befb9-default-rtdb.firebaseio.com"
@@ -28,6 +30,8 @@ portMUX_TYPE mutex = portMUX_INITIALIZER_UNLOCKED;
 int secCount = 0;
 int emgAramCount = -1;
 int emgAramSoundCount = -1;
+int autoSendCount = 0;
+int testCount = 0;
 
 
 //Timer count
@@ -52,6 +56,12 @@ void IRAM_ATTR usecTimer()
     {
       emgAramSoundCount++;
     }
+
+    if(autoSendCount > -1)
+    {
+      autoSendCount++;
+    }
+
 
     usecCount = 0;
 
@@ -79,6 +89,10 @@ void setup() {
   Serial.print("connecting");
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
+    
+    M5.Lcd.setTextSize(3);
+    M5.Lcd.setCursor(10, 100);
+    M5.Lcd.println("Wifi connecting");
     delay(500);
   }
   Serial.println();
@@ -179,7 +193,7 @@ void loop() {
 
   }
 
-  #if 1
+  #if 0
   if(secCount > 5 && emgAramCount == -1){
 
     M5.Lcd.setCursor(10, 100);
@@ -215,6 +229,13 @@ void loop() {
   if(emgAramCount > 3){
     mp3->stop();
   }
+
+  if(autoSendCount > 1){
+    Firebase.setInt("/M5Stack/counter", testCount);
+    testCount++;
+    autoSendCount=0;
+  }
+  
 
 
 
