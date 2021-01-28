@@ -7,6 +7,7 @@
 
 #define WIFI_SSID "20200815me"
 #define WIFI_PASSWORD "0815asdf"
+//test
 
 // FirebaseのデータベースURL（ご自身のデータベースURLに変更してください）
 #define FIREBASE_DATABASE_URL "https://m5data-befb9-default-rtdb.firebaseio.com"
