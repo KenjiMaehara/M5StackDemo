@@ -213,7 +213,7 @@ void loop() {
   #endif
 
 
-  #if 0
+  #if 1
   if(emgAramCount > 3){
     mp3->stop();
   }
