@@ -63,6 +63,7 @@ void IRAM_ATTR usecTimer()
 // カウント初期化
 int count = 0;
 int newCount = 0;
+int stopSound = false;
 
 
 AudioGeneratorMP3 *mp3;
@@ -214,8 +215,9 @@ void loop() {
 
 
   #if 1
-  if(emgAramCount > 3){
+  if(emgAramCount > 3 && stopSound == false){
     mp3->stop();
+    stopSound = true;
   }
   #endif
 
@@ -237,6 +239,7 @@ void loop() {
     M5.Lcd.printf("Count Down: %d", count);
 
 
+    stopSound=false;
     secCount=0;
     emgAramCount=-1;
 
