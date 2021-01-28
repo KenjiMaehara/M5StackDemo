@@ -4,14 +4,6 @@
 #include <M5Stack.h>
 #include <WiFi.h>
 
-#include "AudioFileSourceSD.h"
-#include "AudioFileSourceID3.h"
-#include "AudioGeneratorMP3.h"
-#include "AudioOutputI2S.h"
-
-
-
-
 
 #define WIFI_SSID "20200815me"
 #define WIFI_PASSWORD "0815asdf"
@@ -43,16 +35,6 @@ void IRAM_ATTR usecTimer()
       secCount++;
     }
 
-    if(emgAramCount > -1)
-    {
-      emgAramCount++;
-    }
-
-    if(emgAramSoundCount > -1)
-    {
-      emgAramSoundCount++;
-    }
-
     usecCount = 0;
 
   }
@@ -62,13 +44,6 @@ void IRAM_ATTR usecTimer()
 
 // カウント初期化
 int count = 0;
-int newCount = 0;
-
-
-AudioGeneratorMP3 *mp3;
-AudioFileSourceSD *file;
-AudioOutputI2S *out;
-AudioFileSourceID3 *id3;
 
 
 void setup() {
@@ -91,7 +66,7 @@ void setup() {
   Serial.println(WiFi.localIP());
   M5.Lcd.setTextSize(3);
   M5.Lcd.setCursor(10, 100);
-  M5.Lcd.println("Button Click!");
+  M5.Lcd.println("Button Click! Ver0.0-4");
 
 
 
@@ -113,134 +88,20 @@ void setup() {
 
 
 
-
-void playMP3(char *filename){
-  file = new AudioFileSourceSD(filename);
-  id3 = new AudioFileSourceID3(file);
-  out = new AudioOutputI2S(0, 1); // Output to builtInDAC
-  out->SetOutputModeMono(true);
-  out->SetGain(1.0);
-  mp3 = new AudioGeneratorMP3();
-  mp3->begin(id3, out);
-  while(mp3->isRunning()) {
-    if (!mp3->loop()) mp3->stop();
-    if (emgAramCount > 3){
-      mp3->stop();
-      break;
-    } 
-
-  }
-}
-
-
-
-
 void loop() {
   M5.update();
 
-  if (M5.BtnA.wasReleased()) {
-    // カウントアップ
-    count++;
-
-    // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(YELLOW);
-    M5.Lcd.setTextColor(BLACK);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Up: %d", count);
-  }
-
-  if(M5.BtnC.wasReleased()) {
-    // カウントダウン
-    count--;
-
-    // ゼロ以下にはしない
-    if (count <= 0) count = 0;
-
-    // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(GREEN);
-    M5.Lcd.setTextColor(BLACK);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Down: %d", count);
-  }
-
-  if(M5.BtnB.wasReleased()) {
-    // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(BLUE);
-    M5.Lcd.setTextColor(WHITE);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Send: %d", count);
-
-    // カウント送信
-    Firebase.setInt("/M5Stack/counter02", count);
-    
-
-  }
-
+ 
   #if 1
-  if(secCount > 5 && emgAramCount == -1){
+  if(secCount > 10){
 
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(GREEN);
-    M5.Lcd.setTextColor(BLACK);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Down: %d", count);
-
-
-    newCount = Firebase.getInt("/M5Stack/counter02");
-
-    if(count != newCount)
-    {
-          // ディスプレイ表示
-      M5.Lcd.setCursor(10, 100);
-      M5.Lcd.fillScreen(RED);
-      M5.Lcd.setTextColor(BLACK);
-      M5.Lcd.setTextSize(3);
-      M5.Lcd.printf("Count Send: %d", newCount);
-      
-      count = newCount;
-      emgAramCount=0;
-      playMP3("/Warning-Alarm01-1L.mp3");
-      //emgAramCount=0;
-    }
-
+    count++;
+    Firebase.setInt("/M5Stack/counter02", count);
     secCount=0;
 
 
   }
   #endif
-
-
-  #if 0
-  if(emgAramCount > 3){
-    mp3->stop();
-  }
-  #endif
-
-
-
-  if(emgAramCount > 10){
-
-    count = 0;
-    newCount = 0;
-
-    // カウント送信
-    Firebase.setInt("/M5Stack/counter02", 0);
-
-    // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(GREEN);
-    M5.Lcd.setTextColor(BLACK);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Down: %d", count);
-
-
-    secCount=0;
-    emgAramCount=-1;
-
-  }
 
 
 }
