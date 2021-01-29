@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <IOXhop_FirebaseStream.h>
 #include <IOXhop_FirebaseESP32.h>
-#include <M5StickC.h>
+#include <M5StickCPlus.h>
 #include <WiFi.h>
 
 
@@ -96,17 +96,17 @@ void setup() {
       String path = stream.getPath();
       String data = stream.getDataString();
       //ディスプレイ表示
-      M5.Lcd.setcur(10,30);
+      M5.Lcd.setCursor(10,30);
       M5.Lcd.fillScreen(BLACK);
       M5.Lcd.setTextColor(WHITE);
-      M5.Lcd.printf("M5Stack: %s", data);
+      M5.Lcd.printf("M5Stack: %s", &data[0]);
       M5.Lcd.setCursor(10, 50);
       M5.Lcd.printf("M5StickC: %d", count);
     }
 
 
   });
-}
+
 
  //interrupt timer setting
   //timerBegin is count per 100 microsec.
