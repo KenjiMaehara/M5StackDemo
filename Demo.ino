@@ -175,7 +175,7 @@ void loop() {
     M5.Lcd.printf("Count Send: %d", count);
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter02", count);
+    Firebase.setInt("/M5Stack/counter, count);
     
 
   }
@@ -190,7 +190,7 @@ void loop() {
     M5.Lcd.printf("Count Down: %d", count);
 
 
-    newCount = Firebase.getInt("/M5Stack/counter02");
+    newCount = Firebase.getInt("/M5Stack/counter);
 
     if(count != newCount)
     {
@@ -223,13 +223,13 @@ void loop() {
 
 
 
-  if(emgAramCount > 10){
+  if(emgAramCount > 120){
 
     count = 0;
     newCount = 0;
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter02", 0);
+    Firebase.setInt("/M5Stack/counter, 0);
 
     // ディスプレイ表示
     M5.Lcd.setCursor(10, 100);
