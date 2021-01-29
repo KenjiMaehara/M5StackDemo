@@ -4,14 +4,11 @@
 #include <M5StickC.h>
 #include <WiFi.h>
 
-#include "AudioFileSourceSD.h"
-#include "AudioFileSourceID3.h"
-#include "AudioGeneratorMP3.h"
-#include "AudioOutputI2S.h"
+
 
 #define	VERSION_MAJOR		0
 #define	VERSION_SUB			0
-#define	VERSION_SUB_SUB		5
+#define	VERSION_SUB_SUB		1
 
 #define WIFI_SSID "20200815me"
 #define WIFI_PASSWORD "0815asdf"
@@ -90,11 +87,32 @@ void setup() {
   // WiFi Connected
   Serial.println("\nWiFi Connected.");
   Serial.println(WiFi.localIP());
-  M5.Lcd.setTextSize(3);
-  M5.Lcd.setCursor(10, 100);
+  M5.Lcd.setRotation(3);
+  M5.Lcd.fillScreen(BLACK);
+  M5.Lcd.setCursor(10, 30);
   M5.Lcd.printf("Ver: %d.%d-%d", VERSION_MAJOR,VERSION_SUB,VERSION_SUB_SUB);
 
 
+  Firebase.stream("/M5Stack/counter",[](FirebaseStream stream) {
+    String eventType = stream.getEvent();
+    eventType.toLowerCase();
+    Serial.println(eventType);
+
+    if(eventType == "put"){
+      String path = stream.getPath();
+      String data = stream.getDataString();
+      //ディスプレイ表示
+      M5.Lcd.setcur(10,30);
+      M5.Lcd.fillScreen(BLACK);
+      M5.Lcd.setTextColor(WHITE);
+      M5.Lcd.printf("M5Stack: %s", data);
+      M5.Lcd.setCursor(10, 50);
+      M5.Lcd.printf("M5StickC: %d", count);
+    }
+
+
+  });
+}
 
  //interrupt timer setting
   //timerBegin is count per 100 microsec.
@@ -113,26 +131,6 @@ void setup() {
 }
 
 
-
-
-void playMP3(char *filename){
-  file = new AudioFileSourceSD(filename);
-  id3 = new AudioFileSourceID3(file);
-  out = new AudioOutputI2S(0, 1); // Output to builtInDAC
-  out->SetOutputModeMono(true);
-  out->SetGain(1.0);
-  mp3 = new AudioGeneratorMP3();
-  mp3->begin(id3, out);
-  #if 1
-  while(mp3->isRunning()) {
-    if (!mp3->loop()) mp3->stop();
-    if (emgAramCount > 2){
-      mp3->stop();
-      break;
-    } 
-  }
-  #endif
-}
 
 
 
