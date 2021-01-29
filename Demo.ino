@@ -204,7 +204,7 @@ void loop() {
       count = newCount;
       emgAramCount=0;
       stopSound = false;
-      playMP3("/Warning-Alarm01-1L.mp3");
+      //playMP3("/Warning-Alarm01-1L.mp3");
       //emgAramCount=0;
     }
 
@@ -217,9 +217,11 @@ void loop() {
   
 
   if(emgAramCount > 6 && stopSound == false){
+    #if 0
     while(mp3->isRunning()) {
       mp3->stop();
     }
+    #endif
     M5.Lcd.printf("Ver: %d.%d-%d", VERSION_MAJOR,VERSION_SUB,VERSION_SUB_SUB);
     stopSound = true;
   }
