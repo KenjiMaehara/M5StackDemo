@@ -143,14 +143,13 @@ void loop() {
     count++;
 
     // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(YELLOW);
-    M5.Lcd.setTextColor(BLACK);
-    M5.Lcd.setTextSize(3);
+    M5.Lcd.setCursor(10, 30);
+    M5.Lcd.fillScreen(RED);
+    M5.Lcd.setTextColor(YELLOW);
     M5.Lcd.printf("Count Up: %d", count);
   }
 
-  if(M5.BtnC.wasReleased()) {
+  if(M5.BtnB.wasReleased()) {
     // カウントダウン
     count--;
 
@@ -158,7 +157,7 @@ void loop() {
     if (count <= 0) count = 0;
 
     // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
+    M5.Lcd.setCursor(10, 30);
     M5.Lcd.fillScreen(GREEN);
     M5.Lcd.setTextColor(BLACK);
     M5.Lcd.setTextSize(3);
