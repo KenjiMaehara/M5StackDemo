@@ -1,7 +1,7 @@
 #include <ArduinoJson.h>
 #include <IOXhop_FirebaseStream.h>
 #include <IOXhop_FirebaseESP32.h>
-#include <M5Stack.h>
+#include <M5StickC.h>
 #include <WiFi.h>
 
 #include "AudioFileSourceSD.h"
