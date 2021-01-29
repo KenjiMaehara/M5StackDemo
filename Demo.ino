@@ -75,8 +75,7 @@ void setup() {
   }
   Serial.println();
 
-  // Firebase初期化
-  Firebase.begin(FIREBASE_DATABASE_URL);
+
 
   // WiFi Connected
   Serial.println("\nWiFi Connected.");
@@ -86,8 +85,10 @@ void setup() {
   M5.Lcd.setCursor(10, 30);
   M5.Lcd.printf("Ver: %d.%d-%d", VERSION_MAJOR,VERSION_SUB,VERSION_SUB_SUB);
 
+  // Firebase初期化
+  Firebase.begin(FIREBASE_DATABASE_URL);
 
-  Firebase.stream("/M5Stick/counter",[](FirebaseStream stream) {
+  Firebase.stream("/M5Stack/counter",[](FirebaseStream stream) {
     String eventType = stream.getEvent();
     eventType.toLowerCase();
     Serial.println(eventType);
