@@ -9,9 +9,9 @@
 #include "AudioGeneratorMP3.h"
 #include "AudioOutputI2S.h"
 
-
-
-
+#define	VERSION_MAJOR		0
+#define	VERSION_SUB			0
+#define	VERSION_SUB_SUB		5
 
 #define WIFI_SSID "20200815me"
 #define WIFI_PASSWORD "0815asdf"
@@ -92,7 +92,7 @@ void setup() {
   Serial.println(WiFi.localIP());
   M5.Lcd.setTextSize(3);
   M5.Lcd.setCursor(10, 100);
-  M5.Lcd.println("Button Click!");
+  M5.Lcd.printf("Ver: %d.%d-%d", VERSION_MAJOR,VERSION_SUB,VERSION_SUB_SUB);
 
 
 
@@ -123,14 +123,15 @@ void playMP3(char *filename){
   out->SetGain(1.0);
   mp3 = new AudioGeneratorMP3();
   mp3->begin(id3, out);
+  #if 1
   while(mp3->isRunning()) {
     if (!mp3->loop()) mp3->stop();
-    if (emgAramCount > 3){
+    if (emgAramCount > 2){
       mp3->stop();
       break;
     } 
-
   }
+  #endif
 }
 
 
@@ -175,13 +176,12 @@ void loop() {
     M5.Lcd.printf("Count Send: %d", count);
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter, count);
+    Firebase.setInt("/M5Stack/counter", count);
     
 
   }
-
-  #if 1
-  if(secCount > 5 && emgAramCount == -1){
+  
+  if(secCount > 5 && emgAramCount == -1) {
 
     M5.Lcd.setCursor(10, 100);
     M5.Lcd.fillScreen(GREEN);
@@ -190,7 +190,7 @@ void loop() {
     M5.Lcd.printf("Count Down: %d", count);
 
 
-    newCount = Firebase.getInt("/M5Stack/counter);
+    newCount = Firebase.getInt("/M5Stack/counter");
 
     if(count != newCount)
     {
@@ -203,6 +203,7 @@ void loop() {
       
       count = newCount;
       emgAramCount=0;
+      stopSound = false;
       playMP3("/Warning-Alarm01-1L.mp3");
       //emgAramCount=0;
     }
@@ -211,15 +212,18 @@ void loop() {
 
 
   }
-  #endif
 
+  
+  
 
-  #if 1
-  if(emgAramCount > 3 && stopSound == false){
-    mp3->stop();
+  if(emgAramCount > 6 && stopSound == false){
+    while(mp3->isRunning()) {
+      mp3->stop();
+    }
+    M5.Lcd.printf("Ver: %d.%d-%d", VERSION_MAJOR,VERSION_SUB,VERSION_SUB_SUB);
     stopSound = true;
   }
-  #endif
+
 
 
 
@@ -229,7 +233,7 @@ void loop() {
     newCount = 0;
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter, 0);
+    Firebase.setInt("/M5Stack/counter", 0);
 
     // ディスプレイ表示
     M5.Lcd.setCursor(10, 100);
