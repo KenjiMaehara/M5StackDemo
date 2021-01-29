@@ -63,12 +63,6 @@ int newCount = 0;
 int stopSound = false;
 
 
-AudioGeneratorMP3 *mp3;
-AudioFileSourceSD *file;
-AudioOutputI2S *out;
-AudioFileSourceID3 *id3;
-
-
 void setup() {
   M5.begin();
 
@@ -93,7 +87,7 @@ void setup() {
   M5.Lcd.printf("Ver: %d.%d-%d", VERSION_MAJOR,VERSION_SUB,VERSION_SUB_SUB);
 
 
-  Firebase.stream("/M5Stack/counter",[](FirebaseStream stream) {
+  Firebase.stream("/M5Stick/counter",[](FirebaseStream stream) {
     String eventType = stream.getEvent();
     eventType.toLowerCase();
     Serial.println(eventType);
@@ -164,90 +158,20 @@ void loop() {
     M5.Lcd.printf("Count Down: %d", count);
   }
 
-  if(M5.BtnB.wasReleased()) {
+
+  //2秒押し続けて離すと送信
+  if(M5.BtnA.wasReleasefor(2000)) {
     // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
+    M5.Lcd.setCursor(10, 30);
     M5.Lcd.fillScreen(BLUE);
     M5.Lcd.setTextColor(WHITE);
     M5.Lcd.setTextSize(3);
     M5.Lcd.printf("Count Send: %d", count);
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter", count);
+    Firebase.setInt("/M5StickC/counter", count);
     
-
   }
-  
-  if(secCount > 5 && emgAramCount == -1) {
-
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(GREEN);
-    M5.Lcd.setTextColor(BLACK);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Down: %d", count);
-
-
-    newCount = Firebase.getInt("/M5Stack/counter");
-
-    if(count != newCount)
-    {
-          // ディスプレイ表示
-      M5.Lcd.setCursor(10, 100);
-      M5.Lcd.fillScreen(RED);
-      M5.Lcd.setTextColor(BLACK);
-      M5.Lcd.setTextSize(3);
-      M5.Lcd.printf("Count Send: %d", newCount);
-      
-      count = newCount;
-      emgAramCount=0;
-      stopSound = false;
-      //playMP3("/Warning-Alarm01-1L.mp3");
-      //emgAramCount=0;
-    }
-
-    secCount=0;
-
-
-  }
-
-  
-  
-
-  if(emgAramCount > 6 && stopSound == false){
-    #if 0
-    while(mp3->isRunning()) {
-      mp3->stop();
-    }
-    #endif
-    M5.Lcd.printf("Ver: %d.%d-%d", VERSION_MAJOR,VERSION_SUB,VERSION_SUB_SUB);
-    stopSound = true;
-  }
-
-
-
-
-  if(emgAramCount > 120){
-
-    count = 0;
-    newCount = 0;
-
-    // カウント送信
-    Firebase.setInt("/M5Stack/counter", 0);
-
-    // ディスプレイ表示
-    M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(GREEN);
-    M5.Lcd.setTextColor(BLACK);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Down: %d", count);
-
-
-    stopSound=false;
-    secCount=0;
-    emgAramCount=-1;
-
-  }
-
 
 }
 
