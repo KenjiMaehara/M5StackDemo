@@ -13,8 +13,10 @@
 
 
 
-#define WIFI_SSID "20200815me"
-#define WIFI_PASSWORD "0815asdf"
+//#define WIFI_SSID "20200815me"
+//#define WIFI_PASSWORD "0815asdf"
+#define WIFI_SSID "googlemain"
+#define WIFI_PASSWORD "asdf1116"
 
 // FirebaseのデータベースURL（ご自身のデータベースURLに変更してください）
 #define FIREBASE_DATABASE_URL "https://m5data-befb9-default-rtdb.firebaseio.com"
@@ -84,8 +86,24 @@ void setup() {
   }
   Serial.println();
 
+
+
   // Firebase初期化
   Firebase.begin(FIREBASE_DATABASE_URL);
+
+  Firebase.stream("/M5Stack/counter",[](FirebaseStream stream) {
+    String eventType = stream.getEvent();
+    eventType.toLowerCase();
+    Serial.println(eventType);
+
+    if(eventType == "put"){
+      String path = stream.getPath();
+      String data = stream.getDataString();
+      emgAramCount = 0;
+
+    }
+  });
+
 
   // WiFi Connected
   Serial.println("\nWiFi Connected.");
@@ -110,6 +128,7 @@ void setup() {
   portENTER_CRITICAL(&mutex);
   timerAlarmEnable(interrupptTimer);
   portEXIT_CRITICAL(&mutex);
+
 }
 
 
@@ -175,48 +194,33 @@ void loop() {
     M5.Lcd.printf("Count Send: %d", count);
 
     // カウント送信
-    Firebase.setInt("/M5Stack/counter02", count);
+    Firebase.setInt("/M5Stack/counter", count);
     
 
   }
 
   #if 1
-  if(secCount > 5 && emgAramCount == -1){
+  if(emgAramCount != -1){
 
+
+      // ディスプレイ表示
     M5.Lcd.setCursor(10, 100);
-    M5.Lcd.fillScreen(GREEN);
+    M5.Lcd.fillScreen(RED);
     M5.Lcd.setTextColor(BLACK);
     M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Down: %d", count);
-
-
-    newCount = Firebase.getInt("/M5Stack/counter02");
-
-    if(count != newCount)
-    {
-          // ディスプレイ表示
-      M5.Lcd.setCursor(10, 100);
-      M5.Lcd.fillScreen(RED);
-      M5.Lcd.setTextColor(BLACK);
-      M5.Lcd.setTextSize(3);
-      M5.Lcd.printf("Count Send: %d", newCount);
+    M5.Lcd.printf("Count Send: %d", newCount);
       
-      count = newCount;
-      emgAramCount=0;
-      playMP3("/Warning-Alarm01-1L.mp3");
+    //emgAramCount=0;
+      //playMP3("/Warning-Alarm01-1L.mp3");
       //emgAramCount=0;
-    }
-
     secCount=0;
-
-
   }
   #endif
 
 
   #if 1
   if(emgAramCount > 3 && stopSound == false){
-    mp3->stop();
+    //mp3->stop();
     stopSound = true;
   }
   #endif
@@ -227,16 +231,12 @@ void loop() {
 
     count = 0;
     newCount = 0;
-
-    // カウント送信
-    Firebase.setInt("/M5Stack/counter02", 0);
-
     // ディスプレイ表示
     M5.Lcd.setCursor(10, 100);
     M5.Lcd.fillScreen(GREEN);
     M5.Lcd.setTextColor(BLACK);
     M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Count Down: %d", count);
+    //M5.Lcd.printf("Count Down: %d", count);
 
 
     stopSound=false;
